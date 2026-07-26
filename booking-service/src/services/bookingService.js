@@ -60,12 +60,14 @@ class BookingService {
       console.error('Redis delete error:', err);
     }
 
-    // 6. Publish booking payment request event
+    // 6. Publish booking payment request event (include hotelId so wallet credits the right owner)
     await publishEvent('booking.payment.requested', {
       bookingId: booking.id,
       userId,
       amount: totalPrice,
       roomId,
+      hotelId: room.hotel_id,
+      ownerId: room.owner_id,  // Hotel owner receives the payment
     });
 
     return booking;

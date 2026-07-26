@@ -170,7 +170,6 @@ services:
       DB_PASSWORD: postgres123
       JWT_SECRET: super_secret_jwt_key
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      OWNER_USER_ID: 1
     depends_on:
       rabbitmq:
         condition: service_healthy

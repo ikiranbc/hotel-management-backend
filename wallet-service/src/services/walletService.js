@@ -31,12 +31,12 @@ class WalletService {
     return walletRepository.getTransactions(userId);
   }
 
-  async processPayment({ bookingId, userId, amount, roomId }) {
-    console.log(`[Wallet] Processing payment for booking ${bookingId}: customer ${userId}, amount $${amount}`);
+  async processPayment({ bookingId, userId, amount, roomId, ownerId }) {
+    console.log(`[Wallet] Processing payment for booking ${bookingId}: customer ${userId}, amount $${amount}, hotel owner ${ownerId}`);
     
     // Ensure wallets exist
     const customerWallet = await this.getOrCreateWallet(userId);
-    const ownerId = parseInt(process.env.OWNER_USER_ID || '1');
+    // ownerId comes from the booking event — hotel 1 → owner 1, hotel 2 → owner 2, etc.
     const ownerWallet = await this.getOrCreateWallet(ownerId);
 
     // Try to atomically deduct funds from customer
@@ -57,7 +57,7 @@ class WalletService {
       bookingId,
     });
 
-    // Credit owner account
+    // Credit hotel owner account
     await walletRepository.addFunds(ownerId, amount);
 
     // Log owner transaction
@@ -69,7 +69,7 @@ class WalletService {
       bookingId,
     });
 
-    console.log(`[Wallet] Payment successful for booking ${bookingId}. Funds transferred to owner.`);
+    console.log(`[Wallet] Payment successful for booking ${bookingId}. Funds transferred to hotel owner ${ownerId}.`);
 
     // Publish payment success event
     await publishEvent('payment.success', { bookingId, userId, roomId });

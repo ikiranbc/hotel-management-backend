@@ -1,11 +1,11 @@
 const pool = require('../config/db');
 
 const HOTELS = [
-  { name: 'Grand Kathmandu Hotel', location: 'Thamel, Kathmandu', description: 'Luxury hotel in the heart of Thamel' },
-  { name: 'Himalaya View Resort', location: 'Nagarkot, Bhaktapur', description: 'Breathtaking Himalayan views' },
-  { name: 'Pokhara Lakeside Inn', location: 'Lakeside, Pokhara', description: 'Serene lakeside accommodation' },
-  { name: 'Chitwan Safari Lodge', location: 'Sauraha, Chitwan', description: 'Immersive wildlife and jungle stay' },
-  { name: 'Lumbini Peace Sanctuary', location: 'Lumbini, Rupandehi', description: 'Tranquil retreat near sacred gardens' },
+  { owner_id: 1, name: 'Grand Kathmandu Hotel',  location: 'Thamel, Kathmandu',  description: 'Luxury hotel in the heart of Thamel' },
+  { owner_id: 2, name: 'Himalaya View Resort',   location: 'Nagarkot, Bhaktapur', description: 'Breathtaking Himalayan views' },
+  { owner_id: 3, name: 'Pokhara Lakeside Inn',   location: 'Lakeside, Pokhara',   description: 'Serene lakeside accommodation' },
+  { owner_id: 4, name: 'Chitwan Safari Lodge',   location: 'Sauraha, Chitwan',    description: 'Immersive wildlife and jungle stay' },
+  { owner_id: 5, name: 'Lumbini Peace Sanctuary',location: 'Lumbini, Rupandehi',  description: 'Tranquil retreat near sacred gardens' },
 ];
 
 const ROOM_TYPES = [
@@ -31,8 +31,8 @@ const seed = async () => {
   console.log('Seeding 5 hotels and rooms with pre-booked statuses...');
   for (const h of HOTELS) {
     const hotelRes = await pool.query(
-      `INSERT INTO hotels (name, location, description) VALUES ($1, $2, $3) RETURNING id`,
-      [h.name, h.location, h.description]
+      `INSERT INTO hotels (owner_id, name, location, description) VALUES ($1, $2, $3, $4) RETURNING id`,
+      [h.owner_id, h.name, h.location, h.description]
     );
     const hotelId = hotelRes.rows[0].id;
 

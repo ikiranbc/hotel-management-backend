@@ -7,17 +7,17 @@ class HotelRepository {
   }
 
   async findRoomsByHotel(hotelId) {
-    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.hotel_id = $1 ORDER BY r.id ASC', [hotelId]);
+    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name, h.owner_id FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.hotel_id = $1 ORDER BY r.id ASC', [hotelId]);
     return rows;
   }
 
   async findAvailableRooms(hotelId) {
-    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.hotel_id = $1 AND r.is_available = TRUE ORDER BY r.id ASC', [hotelId]);
+    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name, h.owner_id FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.hotel_id = $1 AND r.is_available = TRUE ORDER BY r.id ASC', [hotelId]);
     return rows;
   }
 
   async findRoomById(roomId) {
-    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.id = $1', [roomId]);
+    const { rows } = await pool.query('SELECT r.*, h.name AS hotel_name, h.owner_id FROM rooms r JOIN hotels h ON r.hotel_id = h.id WHERE r.id = $1', [roomId]);
     return rows[0] || null;
   }
 

@@ -5,6 +5,7 @@ const migrate = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS hotels (
       id SERIAL PRIMARY KEY,
+      owner_id INTEGER NOT NULL,
       name VARCHAR(150) NOT NULL,
       location VARCHAR(200) NOT NULL,
       description TEXT,

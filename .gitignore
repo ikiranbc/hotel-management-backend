@@ -1,0 +1,15 @@
+# Reference folder (assignment materials & docs)
+reference/
+
+# Environment files
+.env
+*.env
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+
+# System & Editor files
+.DS_Store
+.vscode/
+.idea/

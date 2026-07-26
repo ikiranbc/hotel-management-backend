@@ -24,6 +24,11 @@ services:
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   # ── Databases ──────────────────────────────────────────────
   users-db:
@@ -95,6 +100,8 @@ services:
         condition: service_healthy
       users-db:
         condition: service_started
+      redis:
+        condition: service_healthy
     command: sh -c "node src/db/migrate.js && npm start"
 
   hotel-service:
@@ -117,6 +124,8 @@ services:
         condition: service_healthy
       hotels-db:
         condition: service_started
+      redis:
+        condition: service_healthy
     command: sh -c "node src/db/migrate.js && npm start"
 
   booking-service:
@@ -143,6 +152,8 @@ services:
         condition: service_started
       hotel-service:
         condition: service_started
+      redis:
+        condition: service_healthy
     command: sh -c "node src/db/migrate.js && npm start"
 
   wallet-service:
@@ -165,6 +176,8 @@ services:
         condition: service_healthy
       wallet-db:
         condition: service_started
+      redis:
+        condition: service_healthy
     command: sh -c "node src/db/migrate.js && npm start"
 
   api-gateway:

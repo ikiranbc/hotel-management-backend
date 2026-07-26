@@ -214,11 +214,18 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/hotels/1/rooms",
+              "raw": "{{baseUrl}}/api/hotels/:hotelId/rooms",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "hotels", "1", "rooms"]
+              "path": ["api", "hotels", ":hotelId", "rooms"],
+              "variable": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "description": "Change this to 1, 2, or 3 to view different hotels"
+                }
+              ]
             },
-            "description": "Fetches all rooms for Hotel ID 1."
+            "description": "Fetches all rooms for specified Hotel ID."
           },
           "response": []
         },
@@ -234,11 +241,18 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/hotels/1/rooms/available",
+              "raw": "{{baseUrl}}/api/hotels/:hotelId/rooms/available",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "hotels", "1", "rooms", "available"]
+              "path": ["api", "hotels", ":hotelId", "rooms", "available"],
+              "variable": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "description": "Change this to 1, 2, or 3 to view available rooms for different hotels"
+                }
+              ]
             },
-            "description": "Fetches available (unbooked) rooms for Hotel ID 1."
+            "description": "Fetches available rooms for specified Hotel ID."
           },
           "response": []
         },
@@ -254,11 +268,18 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/hotels/rooms/1",
+              "raw": "{{baseUrl}}/api/hotels/rooms/:roomId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "hotels", "rooms", "1"]
+              "path": ["api", "hotels", "rooms", ":roomId"],
+              "variable": [
+                {
+                  "key": "roomId",
+                  "value": "1",
+                  "description": "Room ID (e.g. 1 to 33)"
+                }
+              ]
             },
-            "description": "Fetches room details for Room ID 1."
+            "description": "Fetches room details for specific Room ID."
           },
           "response": []
         }
@@ -318,16 +339,6 @@
         {
           "name": "Get Booking Details by ID",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
             "header": [
               {
@@ -337,11 +348,17 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/bookings/1",
+              "raw": "{{baseUrl}}/api/bookings/:bookingId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "bookings", "1"]
+              "path": ["api", "bookings", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "1"
+                }
+              ]
             },
-            "description": "Fetches booking details for Booking ID 1."
+            "description": "Fetches booking details for Booking ID."
           },
           "response": []
         }

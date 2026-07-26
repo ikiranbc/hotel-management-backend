@@ -52,9 +52,11 @@
               "script": {
                 "exec": [
                   "var jsonData = pm.response.json();",
-                  "if (jsonData.token) {",
-                  "    pm.collectionVariables.set('token', jsonData.token);",
-                  "    console.log('Token automatically saved to collection variable!');",
+                  "var jwtToken = jsonData.token || (jsonData.data && jsonData.data.token);",
+                  "if (jwtToken) {",
+                  "    pm.collectionVariables.set('token', jwtToken);",
+                  "    pm.environment.set('token', jwtToken);",
+                  "    console.log('JWT Token auto-saved:', jwtToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -78,25 +80,21 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "users", "login"]
             },
-            "description": "Authenticates user credentials and returns a JWT token. (Auto-saves token to collection variable)."
+            "description": "Authenticates user credentials and returns a JWT token. Auto-saves token."
           },
           "response": []
         },
         {
           "name": "Get Profile",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/users/profile",
               "host": ["{{baseUrl}}"],
@@ -114,18 +112,13 @@
         {
           "name": "Load Funds into Wallet",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -147,18 +140,14 @@
         {
           "name": "Get Wallet Balance",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/wallet/balance",
               "host": ["{{baseUrl}}"],
@@ -171,18 +160,14 @@
         {
           "name": "Get Transactions Ledger",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/wallet/transactions",
               "host": ["{{baseUrl}}"],
@@ -200,18 +185,14 @@
         {
           "name": "List All Hotels",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/hotels",
               "host": ["{{baseUrl}}"],
@@ -224,18 +205,14 @@
         {
           "name": "List All Rooms by Hotel ID",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/hotels/1/rooms",
               "host": ["{{baseUrl}}"],
@@ -248,18 +225,14 @@
         {
           "name": "List Available Rooms by Hotel ID",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/hotels/1/rooms/available",
               "host": ["{{baseUrl}}"],
@@ -272,18 +245,14 @@
         {
           "name": "Get Specific Room Details",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/hotels/rooms/1",
               "host": ["{{baseUrl}}"],
@@ -301,18 +270,13 @@
         {
           "name": "Create Room Booking",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -334,18 +298,14 @@
         {
           "name": "Get My Bookings",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/bookings/my",
               "host": ["{{baseUrl}}"],
@@ -369,7 +329,13 @@
               ]
             },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/bookings/1",
               "host": ["{{baseUrl}}"],

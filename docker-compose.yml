@@ -95,6 +95,7 @@ services:
         condition: service_healthy
       users-db:
         condition: service_started
+    command: sh -c "node src/db/migrate.js && npm start"
 
   hotel-service:
     build: ./hotel-service
@@ -116,6 +117,7 @@ services:
         condition: service_healthy
       hotels-db:
         condition: service_started
+    command: sh -c "node src/db/migrate.js && npm start"
 
   booking-service:
     build: ./booking-service
@@ -141,6 +143,7 @@ services:
         condition: service_started
       hotel-service:
         condition: service_started
+    command: sh -c "node src/db/migrate.js && npm start"
 
   wallet-service:
     build: ./wallet-service
@@ -162,6 +165,7 @@ services:
         condition: service_healthy
       wallet-db:
         condition: service_started
+    command: sh -c "node src/db/migrate.js && npm start"
 
   api-gateway:
     build: ./api-gateway

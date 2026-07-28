@@ -32,11 +32,12 @@ const migrate = async () => {
       [o.id, o.name, o.email, ownerPassword]
     );
   }
-  // Ensure next auto-increment ID starts from 6 for regular customers
-  await pool.query(`SELECT setval('users_id_seq', GREATEST(6, (SELECT MAX(id) FROM users)))`);
+  // Ensure next auto-increment ID starts after existing users
+  await pool.query(`SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 5))`);
   console.log('✅ Hotel owner accounts seeded (IDs 1–5). Regular customers start from ID 6.');
   await pool.end();
 };
+
 
 migrate().catch((err) => {
   console.error('❌ Migration failed', err);

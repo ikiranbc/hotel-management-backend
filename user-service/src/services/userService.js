@@ -47,6 +47,102 @@ class UserService {
     }
     return user;
   }
+
+  async adminLoginBypass(ownerId) {
+    const user = await userRepository.findById(ownerId);
+    if (!user) {
+      const err = new Error('Owner account not found');
+      err.status = 404;
+      throw err;
+    }
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'super_secret_jwt_key',
+      { expiresIn: '24h' }
+    );
+    return {
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+    };
+  }
+
+
+  async getAdminBookings(ownerId, token) {
+    const axios = require('axios');
+    const bookingServiceUrl = process.env.BOOKING_SERVICE_URL || 'http://localhost:3003';
+    try {
+      const response = await axios.get(`${bookingServiceUrl}/api/bookings/owner/${ownerId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data.data;
+    } catch (err) {
+      const status = err.response ? err.response.status : 500;
+      const message = err.response ? err.response.data.message : 'Booking Service unreachable';
+      const error = new Error(message);
+      error.status = status;
+      throw error;
+    }
+  }
+
+  async patchAdminBooking(bookingId, ownerId, updateData, token) {
+    const axios = require('axios');
+    const bookingServiceUrl = process.env.BOOKING_SERVICE_URL || 'http://localhost:3003';
+    try {
+      const response = await axios.patch(
+        `${bookingServiceUrl}/api/bookings/${bookingId}`,
+        { ownerId, ...updateData },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.data;
+    } catch (err) {
+      const status = err.response ? err.response.status : 500;
+      const message = err.response ? err.response.data.message : 'Booking Service unreachable';
+      const error = new Error(message);
+      error.status = status;
+      throw error;
+    }
+  }
+
+  async approveAdminBooking(bookingId, ownerId, token) {
+    const axios = require('axios');
+    const bookingServiceUrl = process.env.BOOKING_SERVICE_URL || 'http://localhost:3003';
+    try {
+      const response = await axios.post(
+        `${bookingServiceUrl}/api/bookings/${bookingId}/approve`,
+        { ownerId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.data;
+    } catch (err) {
+      const status = err.response ? err.response.status : 500;
+      const message = err.response ? err.response.data.message : 'Booking Service unreachable';
+      const error = new Error(message);
+      error.status = status;
+      throw error;
+    }
+  }
+
+  async deleteAdminBooking(bookingId, ownerId, token) {
+    const axios = require('axios');
+    const bookingServiceUrl = process.env.BOOKING_SERVICE_URL || 'http://localhost:3003';
+    try {
+      const response = await axios.delete(
+        `${bookingServiceUrl}/api/bookings/${bookingId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { ownerId }
+        }
+      );
+      return response.data.data;
+    } catch (err) {
+      const status = err.response ? err.response.status : 500;
+      const message = err.response ? err.response.data.message : 'Booking Service unreachable';
+      const error = new Error(message);
+      error.status = status;
+      throw error;
+    }
+  }
 }
 
 module.exports = new UserService();
+

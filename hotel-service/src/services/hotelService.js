@@ -5,6 +5,22 @@ const HOTELS_CACHE_KEY = 'hotels:all';
 const CACHE_TTL = 300; // 5 minutes
 const ROOM_CACHE_TTL = 60; // 60 seconds
 
+function formatRoom(r) {
+  if (!r) return r;
+  const ordered = {
+    id: r.id,
+    hotel_id: r.hotel_id,
+    hotel_name: r.hotel_name,
+    owner_id: r.owner_id,
+    room_number: r.room_number,
+    type: r.type,
+    price: r.price,
+    is_available: r.is_available,
+    created_at: r.created_at
+  };
+  return ordered;
+}
+
 class HotelService {
   async getAllHotels() {
     try {
@@ -28,7 +44,8 @@ class HotelService {
   }
 
   async getRoomsByHotel(hotelId) {
-    return hotelRepository.findRoomsByHotel(hotelId);
+    const rooms = await hotelRepository.findRoomsByHotel(hotelId);
+    return rooms.map(formatRoom);
   }
 
   async getAvailableRooms(hotelId) {
@@ -43,14 +60,15 @@ class HotelService {
     }
 
     const rooms = await hotelRepository.findAvailableRooms(hotelId);
+    const formattedRooms = rooms.map(formatRoom);
 
     try {
-      await redis.setex(cacheKey, ROOM_CACHE_TTL, JSON.stringify(rooms));
+      await redis.setex(cacheKey, ROOM_CACHE_TTL, JSON.stringify(formattedRooms));
     } catch (err) {
       console.error('Redis write error:', err);
     }
 
-    return rooms;
+    return formattedRooms;
   }
 
   async getRoomById(roomId) {
@@ -60,7 +78,7 @@ class HotelService {
       err.status = 404;
       throw err;
     }
-    return room;
+    return formatRoom(room);
   }
 
   async markRoomAvailability(roomId, isAvailable) {
@@ -74,8 +92,11 @@ class HotelService {
         console.error('Redis delete error:', err);
       }
     }
-    return updatedRoom;
+    // Fetch fresh details to have hotel_name and owner_id fields present and properly formatted
+    const fullRoom = await hotelRepository.findRoomById(roomId);
+    return formatRoom(fullRoom);
   }
 }
 
 module.exports = new HotelService();
+

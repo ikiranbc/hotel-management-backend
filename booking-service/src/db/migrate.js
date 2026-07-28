@@ -8,12 +8,17 @@ const migrate = async () => {
       user_id INTEGER NOT NULL,
       room_id INTEGER NOT NULL,
       hotel_id INTEGER NOT NULL,
+      hotel_name VARCHAR(150),
+      owner_id INTEGER,
+      room_number VARCHAR(20),
       check_in DATE NOT NULL,
       check_out DATE NOT NULL,
       total_price DECIMAL(10,2) NOT NULL,
       status VARCHAR(20) DEFAULT 'pending', -- pending/confirmed/cancelled
+      is_paid BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT NOW()
     );
+    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE;
   `);
   console.log('✅ Bookings table ready.');
   await pool.end();
@@ -23,3 +28,4 @@ migrate().catch((err) => {
   console.error('❌ Booking migration failed', err);
   process.exit(1);
 });
+

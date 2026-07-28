@@ -39,6 +39,67 @@ class BookingController {
     }
   }
 
+
+  // Admin / Owner Bookings Controllers (authenticated via owner JWT token)
+  async getAdminBookings(req, res) {
+    try {
+      const ownerId = req.user.userId;
+      if (ownerId < 1 || ownerId > 5) {
+        return res.status(403).json({ success: false, message: 'Forbidden: Access restricted to hotel owners/admins' });
+      }
+      const bookings = await bookingService.getBookingsByOwner(ownerId);
+      return res.status(200).json({ success: true, data: bookings });
+    } catch (err) {
+      return res.status(err.status || 500).json({ success: false, message: err.message });
+    }
+  }
+
+  async approveAdminBooking(req, res) {
+    try {
+      const ownerId = req.user.userId;
+      if (ownerId < 1 || ownerId > 5) {
+        return res.status(403).json({ success: false, message: 'Forbidden: Access restricted to hotel owners/admins' });
+      }
+      const bookingId = parseInt(req.params.id);
+      const booking = await bookingService.approveBookingByOwner(bookingId, ownerId);
+      return res.status(200).json({ success: true, data: booking });
+    } catch (err) {
+      return res.status(err.status || 500).json({ success: false, message: err.message });
+    }
+  }
+
+
+  async patchAdminBooking(req, res) {
+    try {
+      const ownerId = req.user.userId;
+      if (ownerId < 1 || ownerId > 5) {
+        return res.status(403).json({ success: false, message: 'Forbidden: Access restricted to hotel owners/admins' });
+      }
+      const bookingId = parseInt(req.params.id);
+      const authHeader = req.headers.authorization;
+      const token = authHeader ? authHeader.split(' ')[1] : '';
+      const booking = await bookingService.updateBookingByOwner(bookingId, ownerId, req.body, token);
+      return res.status(200).json({ success: true, data: booking });
+    } catch (err) {
+      return res.status(err.status || 500).json({ success: false, message: err.message });
+    }
+  }
+
+  async deleteAdminBooking(req, res) {
+    try {
+      const ownerId = req.user.userId;
+      if (ownerId < 1 || ownerId > 5) {
+        return res.status(403).json({ success: false, message: 'Forbidden: Access restricted to hotel owners/admins' });
+      }
+      const bookingId = parseInt(req.params.id);
+      const booking = await bookingService.deleteBookingByOwner(bookingId, ownerId);
+      return res.status(200).json({ success: true, data: booking });
+    } catch (err) {
+      return res.status(err.status || 500).json({ success: false, message: err.message });
+    }
+  }
+
+  // Internal / Unauthenticated fallback methods
   async getBookingsByOwner(req, res) {
     try {
       const bookings = await bookingService.getBookingsByOwner(parseInt(req.params.ownerId));

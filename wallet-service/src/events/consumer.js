@@ -3,7 +3,6 @@ const walletService = require('../services/walletService');
 
 const EXCHANGE_NAME = 'hotel_booking';
 const QUEUE_NAME = 'wallet_payment_requests';
-const ROUTING_KEY = 'booking.payment.requested';
 
 const startConsumer = async () => {
   try {
@@ -12,21 +11,26 @@ const startConsumer = async () => {
 
     await channel.assertExchange(EXCHANGE_NAME, 'topic', { durable: true });
     await channel.assertQueue(QUEUE_NAME, { durable: true });
-    await channel.bindQueue(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
+    await channel.bindQueue(QUEUE_NAME, EXCHANGE_NAME, 'booking.#');
 
     console.log(`[*] Wallet Service consuming events from queue: ${QUEUE_NAME}`);
 
     channel.consume(QUEUE_NAME, async (msg) => {
       if (msg !== null) {
+        const routingKey = msg.fields.routingKey;
         try {
           const content = JSON.parse(msg.content.toString());
-          console.log(`[x] Received payment request:`, content);
+          console.log(`[x] Received event on key '${routingKey}':`, content);
 
-          await walletService.processPayment(content);
+          if (routingKey === 'booking.payment.requested') {
+            await walletService.processPayment(content);
+          } else if (routingKey === 'booking.refund.requested') {
+            await walletService.processRefund(content);
+          }
 
           channel.ack(msg);
         } catch (err) {
-          console.error('Error processing booking payment request:', err);
+          console.error(`Error processing event on key ${routingKey}:`, err);
           channel.nack(msg, false, false);
         }
       }

@@ -15,10 +15,11 @@ const migrate = async () => {
       check_out DATE NOT NULL,
       total_price DECIMAL(10,2) NOT NULL,
       status VARCHAR(20) DEFAULT 'pending', -- pending/confirmed/cancelled
-      is_paid BOOLEAN DEFAULT FALSE,
+      is_paid VARCHAR(20) DEFAULT 'false',
       created_at TIMESTAMP DEFAULT NOW()
     );
-    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE;
+    ALTER TABLE bookings ALTER COLUMN is_paid TYPE VARCHAR(20);
+  
   `);
   console.log('✅ Bookings table ready.');
   await pool.end();

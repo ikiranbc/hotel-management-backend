@@ -4,7 +4,7 @@ class BookingRepository {
   async create({ userId, roomId, hotelId, hotelName, ownerId, roomNumber, checkIn, checkOut, totalPrice }) {
     const query = `
       INSERT INTO bookings (user_id, room_id, hotel_id, hotel_name, owner_id, room_number, check_in, check_out, total_price, status, is_paid)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', FALSE)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', 'false')
       RETURNING *
     `;
     const values = [userId, roomId, hotelId, hotelName, ownerId, roomNumber, checkIn, checkOut, totalPrice];

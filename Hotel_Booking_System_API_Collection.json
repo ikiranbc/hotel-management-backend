@@ -148,118 +148,9 @@
             "description": "Gets the profile information of the authenticated user."
           },
           "response": []
-        },
-        {
-          "name": "Admin - Get Bookings",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/admin/bookings",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "admin", "bookings"]
-            },
-            "description": "Allows owner (ID 1-5) to fetch bookings for their hotel."
-          },
-          "response": []
-        },
-        {
-          "name": "Admin - Update Booking Dates (PATCH)",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"check_in\": \"2026-08-05\",\n  \"check_out\": \"2026-08-10\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users/admin/bookings/:bookingId",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "admin", "bookings", ":bookingId"],
-              "variable": [
-                {
-                  "key": "bookingId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Allows owner (ID 1-5) to modify check-in and check-out dates of a booking."
-          },
-          "response": []
-        },
-        {
-          "name": "Admin - Approve Booking",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/admin/bookings/:bookingId/approve",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "admin", "bookings", ":bookingId", "approve"],
-              "variable": [
-                {
-                  "key": "bookingId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Allows owner (ID 1-5) to approve a booking."
-          },
-          "response": []
-        },
-        {
-          "name": "Admin - Cancel Booking",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/admin/bookings/:bookingId/cancel",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "admin", "bookings", ":bookingId", "cancel"],
-              "variable": [
-                {
-                  "key": "bookingId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Allows owner (ID 1-5) to cancel a booking."
-          },
-          "response": []
         }
       ]
     },
-
-
     {
       "name": "2. Wallet Service",
       "item": [
@@ -513,6 +404,113 @@
               ]
             },
             "description": "Fetches booking details for Booking ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Get Hotel Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/admin/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "admin", "bookings"]
+            },
+            "description": "Allows hotel owner (ID 1-5) to fetch bookings for their hotel."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Approve Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/admin/bookings/:bookingId/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "admin", "bookings", ":bookingId", "approve"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Allows hotel owner (ID 1-5) to approve a pending booking."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Update Booking Dates/Status (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"check_in\": \"2026-08-05\",\n  \"check_out\": \"2026-08-10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/admin/bookings/:bookingId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "admin", "bookings", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Allows hotel owner (ID 1-5) to modify check-in/out dates or status."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin - Delete Booking Entry",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/admin/bookings/:bookingId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "admin", "bookings", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Allows hotel owner (ID 1-5) to cancel a booking record (updates status to 'cancelled', updates is_paid status to 'returned', processes a full refund to the customer's wallet, and releases the room)."
           },
           "response": []
         }

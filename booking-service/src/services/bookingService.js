@@ -23,8 +23,11 @@ function formatBooking(b) {
     is_paid: b.is_paid,
     created_at: b.created_at
   };
-  if (b.is_paid && b.status === 'pending') {
+  const isPaid = b.is_paid === true || b.is_paid === 'true';
+  if (isPaid && b.status === 'pending') {
     ordered.message = "This booking is paid and pending. Please confirm or cancel this booking.";
+  } else if (!isPaid && b.is_paid !== 'returned' && b.status === 'cancelled') {
+    ordered.message = "The price exceeded your wallet amount";
   }
   return ordered;
 }
@@ -107,7 +110,7 @@ class BookingService {
   }
 
   async confirmBooking(bookingId, roomId, userId) {
-    const updated = await bookingRepository.updatePaidStatus(bookingId, true);
+    const updated = await bookingRepository.updatePaidStatus(bookingId, 'true');
     if (updated) {
       // Invalidate cache
       try {
@@ -136,6 +139,7 @@ class BookingService {
     }
     return formatBooking(updated);
   }
+
 
   async getMyBookings(userId) {
     const cacheKey = `bookings:user:${userId}`;
@@ -312,21 +316,41 @@ class BookingService {
       throw err;
     }
 
-    // Release room availability if deleting a non-cancelled booking
-    if (booking.status !== 'cancelled') {
-      await publishEvent('room.status.update', {
-        roomId: booking.room_id,
-        isAvailable: true,
+    if (booking.status === 'cancelled') {
+      const err = new Error('Booking is already cancelled');
+      err.status = 400;
+      throw err;
+    }
+
+    const isAlreadyPaid = booking.is_paid === true || booking.is_paid === 'true';
+
+    const updated = await bookingRepository.updateStatus(bookingId, 'cancelled');
+    if (isAlreadyPaid) {
+      await bookingRepository.updatePaidStatus(bookingId, 'returned');
+      updated.is_paid = 'returned';
+      
+      // Publish event for wallet service to process the refund
+      await publishEvent('booking.refund.requested', {
+        bookingId: booking.id,
+        userId: booking.user_id,
+        amount: booking.total_price,
+        ownerId: booking.owner_id
       });
     }
 
-    const deleted = await bookingRepository.delete(bookingId);
     try {
       await redis.del(`bookings:user:${booking.user_id}`);
     } catch (err) {
       console.error('Redis delete error:', err);
     }
-    return formatBooking(deleted);
+
+    // Release room availability
+    await publishEvent('room.status.update', {
+      roomId: booking.room_id,
+      isAvailable: true,
+    });
+
+    return formatBooking(updated);
   }
 }
 

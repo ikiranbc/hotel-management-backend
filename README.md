@@ -59,15 +59,21 @@ docker compose exec wallet-service node src/db/migrate.js
 
 ## API & Testing Reference
 
-You can import the provided collection inside `reference/hotelManagement/HotelManagement.postman_collection.json` into **Insomnia** or **Postman** to execute API commands.
+You can import the provided Postman collection [`Hotel_Booking_System_API_Collection.json`](file:///Users/kiranbudachhetri/Documents/Project%20Hotel%20Management/hotel-management-backend/Hotel_Booking_System_API_Collection.json) into **Postman** or **Insomnia** to execute API commands.
 
 ### Key API Flow:
 1. **Register:** `POST /api/users/register` to register a customer account.
-2. **Login:** `POST /api/users/login` to login and receive a JWT. Copy this token.
-3. **Load Wallet:** `POST /api/wallet/load` (Headers: `Authorization: Bearer <TOKEN>`, Body: `{"amount": 500}`) to add mock money.
-4. **List Hotels:** `GET /api/hotels` (cached).
-5. **Get Available Rooms:** `GET /api/hotels/1/rooms/available` (cached).
-6. **Book a Room:** `POST /api/bookings` (Body: `{"roomId": 1, "checkIn": "2026-08-01", "checkOut": "2026-08-03"}`).
-7. **Check Balance:** `GET /api/wallet/balance` (should show balance decremented).
-8. **Check Transactions:** `GET /api/wallet/transactions` (shows payment ledger entry).
-9. **Check Bookings:** `GET /api/bookings/my` (shows booking status updated to `confirmed`).
+2. **Login:** `POST /api/users/login` to login and receive a JWT.
+3. **Get/Delete Profile:** `GET /api/users/profile` and `DELETE /api/users/profile` to manage user account.
+4. **Load Wallet:** `POST /api/wallet/load` (Headers: `Authorization: Bearer <TOKEN>`, Body: `{"amount": 500}`) to add money.
+5. **List Hotels:** `GET /api/hotels` (cached).
+6. **Get Available Rooms:** `GET /api/hotels/1/rooms/available` (cached).
+7. **Book a Room:** `POST /api/bookings` (Body: `{"roomId": 1, "checkIn": "2026-08-01", "checkOut": "2026-08-03"}`).
+8. **User Cancel Booking:** `POST /api/bookings/:id/cancel` to cancel booking and free room availability.
+9. **Check Balance & Transactions:** `GET /api/wallet/balance` & `GET /api/wallet/transactions`.
+10. **Admin / Owner Booking Management:**
+    - `POST /api/users/admin/login-bypass` (Body: `{"ownerId": 1}`) to log in as Hotel Owner.
+    - `GET /api/bookings/admin/bookings` to view hotel bookings.
+    - `POST /api/bookings/admin/bookings/:id/approve` to confirm pending bookings.
+    - `PATCH /api/bookings/admin/bookings/:id` to modify check-in/check-out dates or status.
+    - `DELETE /api/bookings/admin/bookings/:id` to delete booking entry and free room.
